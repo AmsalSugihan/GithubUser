@@ -38,6 +38,13 @@ class UsersFavActivity : AppCompatActivity() {
         val handlerThread = HandlerThread("DataObserver")
         handlerThread.start()
         loadUsersAsync()
+
+        adapter.setOnItemClickCallback(object : UserAdapter.OnItemClickCallback {
+            override fun onItemClicked(data: User) {
+                showSelectedUser(data)
+            }
+        })
+
     }
 
     private fun loadUsersAsync() {
@@ -55,5 +62,11 @@ class UsersFavActivity : AppCompatActivity() {
                 adapter.setData(ArrayList())
             }
         }
+    }
+
+    private fun showSelectedUser(user: User) {
+        val intent = Intent(this, DetailUserActivity::class.java)
+        intent.putExtra(DetailUserActivity.EXTRA_USER, user)
+        startActivity(intent)
     }
 }

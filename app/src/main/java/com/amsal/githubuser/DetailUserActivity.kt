@@ -106,7 +106,9 @@ class DetailUserActivity : AppCompatActivity() {
                     user.location = users.getString("location")
                     user.avatar = users.getString("avatar_url")
                     user.followers_url = users.getString("followers_url")
-                    user.following_url = users.getString("following_url")
+                    val userLogin = users.getString("login")
+                    val following_url = "https://api.github.com/users/$userLogin/following"
+                    user.following_url = following_url
                     user.url = users.getString("url")
                     showUser()
                 } catch (e: Exception) {
