@@ -1,17 +1,22 @@
 package com.amsal.githubuser
 
 import android.content.ContentValues
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.amsal.githubuser.adapter.SectionsPagerAdapter
 import com.amsal.githubuser.db.DatabaseContract
+import com.amsal.githubuser.db.DatabaseContract.UserColumns.Companion.CONTENT_URI
 import com.amsal.githubuser.db.UserHelper
 import com.amsal.githubuser.model.MainViewModel
 import com.amsal.githubuser.model.User
+import com.amsal.mynotesapp.helper.MappingHelper
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.loopj.android.http.AsyncHttpClient
@@ -28,14 +33,15 @@ class DetailUserActivity : AppCompatActivity() {
     }
 
     private val user = User()
-    private lateinit var userHelper: UserHelper
+    private lateinit var uriWithId: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_user)
 
-        userHelper = UserHelper.getInstance(applicationContext)
-        userHelper.open()
+        val handlerThread = HandlerThread("DataObserver")
+        handlerThread.start()
+        val handler = Handler(handlerThread.looper)
 
         val userSearch = intent.getParcelableExtra(EXTRA_USER) as User
 
@@ -48,15 +54,22 @@ class DetailUserActivity : AppCompatActivity() {
         view_pager.adapter = sectionsPagerAdapter
         tabs.setupWithViewPager(view_pager)
         fab_add.setOnClickListener {
-            val result = userHelper.queryById(user.id.toString())
-            if (result.count > 0) {
-                deleteUserFavorite()
-//                Toast.makeText(this, "Gagal menambah data", Toast.LENGTH_SHORT).show()
+
+            uriWithId = Uri.parse(CONTENT_URI.toString() + "/" + user.id)
+            val cursor = contentResolver.query(uriWithId, null, null, null, null)
+
+            if (cursor != null) {
+                var result = MappingHelper.mapCursorToObject(cursor)
+                if (result != null) {
+                    deleteUserFavorite()
+                } else {
+                    setUserFavorite()
+                }
+                cursor.close()
             } else {
-                setUserFavorite()
+                Toast.makeText(this, "gagal", Toast.LENGTH_LONG).show()
             }
         }
-
     }
 
     private fun showLoading(state: Boolean) {
@@ -125,19 +138,24 @@ class DetailUserActivity : AppCompatActivity() {
             .apply(RequestOptions().override(350, 550))
             .into(image_photo)
 
-
-        val result = userHelper.queryById(user.id.toString())
-        Log.d("horas",user.id.toString())
-        if (result.count > 0) {
-            Glide.with(this@DetailUserActivity)
-                .load(R.drawable.ic_fav)
-                .apply(RequestOptions().override(350, 550))
-                .into(fab_add)
+        uriWithId = Uri.parse(CONTENT_URI.toString() + "/" + user.id)
+        val cursor = contentResolver.query(uriWithId, null, null, null, null)
+        if (cursor != null) {
+            var result = MappingHelper.mapCursorToObject(cursor)
+            if (result != null) {
+                Glide.with(this@DetailUserActivity)
+                    .load(R.drawable.ic_fav)
+                    .apply(RequestOptions().override(350, 550))
+                    .into(fab_add)
+            } else {
+                Glide.with(this@DetailUserActivity)
+                    .load(R.drawable.ic_fav_border)
+                    .apply(RequestOptions().override(350, 550))
+                    .into(fab_add)
+            }
+            cursor.close()
         } else {
-            Glide.with(this@DetailUserActivity)
-                .load(R.drawable.ic_fav_border)
-                .apply(RequestOptions().override(350, 550))
-                .into(fab_add)
+            Toast.makeText(this, "gagal", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -152,18 +170,16 @@ class DetailUserActivity : AppCompatActivity() {
         values.put(DatabaseContract.UserColumns.FOLLOWERS_URL, user.followers_url)
         values.put(DatabaseContract.UserColumns.URL, user.url)
 
-        val result = userHelper.insert(values)
+        Log.d("horas", CONTENT_URI.toString())
 
-        if (result > 0) {
-            Glide.with(this@DetailUserActivity)
-                .load(R.drawable.ic_fav)
-                .apply(RequestOptions().override(350, 550))
-                .into(fab_add)
-            Toast.makeText(this, "${user.name} telah ditambahkan ke favorit", Toast.LENGTH_LONG)
-                .show()
-        } else {
-            Toast.makeText(this, "Gagal menambah data", Toast.LENGTH_SHORT).show()
-        }
+        contentResolver.insert(CONTENT_URI, values)
+
+        Glide.with(this@DetailUserActivity)
+            .load(R.drawable.ic_fav)
+            .apply(RequestOptions().override(350, 550))
+            .into(fab_add)
+        Toast.makeText(this, "${user.name} telah ditambahkan ke favorit", Toast.LENGTH_LONG)
+            .show()
     }
 
     private fun deleteUserFavorite() {
@@ -180,7 +196,7 @@ class DetailUserActivity : AppCompatActivity() {
             .setMessage(dialogMessage)
             .setCancelable(false)
             .setPositiveButton("Ya") { dialog, id ->
-                val result = userHelper.deleteById(user.id.toString()).toLong()
+                var result = contentResolver.delete(uriWithId, null, null)
                 if (result > 0) {
                     Glide.with(this@DetailUserActivity)
                         .load(R.drawable.ic_fav_border)

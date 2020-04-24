@@ -28,9 +28,12 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
-        mainViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        ).get(MainViewModel::class.java)
 
-        adapter.setOnItemClickCallback(object : UserAdapter.OnItemClickCallback{
+        adapter.setOnItemClickCallback(object : UserAdapter.OnItemClickCallback {
             override fun onItemClicked(data: User) {
                 showSelectedUser(data)
             }
@@ -49,6 +52,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
     private fun showLoading(state: Boolean) {
         if (state) {
             progressBar.visibility = View.VISIBLE
@@ -56,11 +60,13 @@ class MainActivity : AppCompatActivity() {
             progressBar.visibility = View.GONE
         }
     }
+
     private fun showSelectedUser(user: User) {
         val intent = Intent(this@MainActivity, DetailUserActivity::class.java)
         intent.putExtra(DetailUserActivity.EXTRA_USER, user)
         startActivity(intent)
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
@@ -70,10 +76,10 @@ class MainActivity : AppCompatActivity() {
         if (item.itemId == R.id.action_change_settings) {
             val mIntent = Intent(Settings.ACTION_LOCALE_SETTINGS)
             startActivity(mIntent)
-        }else if(item.itemId == R.id.action_user_favorite){
+        } else if (item.itemId == R.id.action_user_favorite) {
             val favIntent = Intent(this, UsersFavActivity::class.java)
             startActivity(favIntent)
-        }else if(item.itemId == R.id.action_alarm){
+        } else if (item.itemId == R.id.action_alarm) {
             val alarmIntent = Intent(this, AlarmActivity::class.java)
             startActivity(alarmIntent)
         }

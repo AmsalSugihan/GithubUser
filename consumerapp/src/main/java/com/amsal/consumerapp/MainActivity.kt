@@ -1,32 +1,26 @@
-package com.amsal.githubuser
+package com.amsal.consumerapp
 
-import android.content.Intent
-import android.database.ContentObserver
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.os.HandlerThread
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.amsal.githubuser.adapter.UserAdapter
-import com.amsal.githubuser.db.DatabaseContract.UserColumns.Companion.CONTENT_URI
-import com.amsal.githubuser.db.UserHelper
-import com.amsal.githubuser.model.User
+import com.amsal.githubuser.db.DatabaseContract
 import com.amsal.mynotesapp.helper.MappingHelper
-import kotlinx.android.synthetic.main.activity_users_fav.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class UsersFavActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: UserAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_users_fav)
+        setContentView(R.layout.activity_main)
 
         supportActionBar?.title = "Favorite User"
 
@@ -44,7 +38,13 @@ class UsersFavActivity : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.Main) {
             progressbar.visibility = View.VISIBLE
             val deferredNotes = async(Dispatchers.IO) {
-                val cursor = contentResolver?.query(CONTENT_URI, null, null, null, null)
+                val cursor = contentResolver?.query(
+                    DatabaseContract.UserColumns.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    null
+                )
                 MappingHelper.mapCursorToArrayList(cursor)
             }
             progressbar.visibility = View.INVISIBLE

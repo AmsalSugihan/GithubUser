@@ -46,7 +46,8 @@ class UserHelper(context: Context) {
             null,
             null,
             "$_ID ASC",
-            null)
+            null
+        )
     }
 
     fun queryById(id: String): Cursor {

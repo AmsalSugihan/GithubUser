@@ -3,6 +3,8 @@
     package="com.amsal.githubuser">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <permission android:name="com.amsal.githubuser.READ_DATABASE" android:protectionLevel="normal"/>
+    <permission android:name="com.amsal.githubuser.WRITE_DATABASE" android:protectionLevel="normal"/>
 
     <application
         android:allowBackup="true"
@@ -12,6 +14,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <provider
+            android:name=".provider.GithubUserProvider"
+            android:authorities="com.amsal.githubuser"
+            android:enabled="true"
+            android:readPermission="com.amsal.githubuser.READ_DATABASE"
+            android:writePermission="com.amsal.githubuser.WRITE_DATABASE"
+            android:exported="true"/>
+
         <receiver
             android:name=".manager.AlarmReceiver"
             android:enabled="true"

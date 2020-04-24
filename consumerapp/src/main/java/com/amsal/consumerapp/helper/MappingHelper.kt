@@ -15,14 +15,11 @@ object MappingHelper {
                 val nama = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.NAME))
                 val id = getInt(getColumnIndexOrThrow(DatabaseContract.UserColumns.ID))
                 val avatar = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.AVATAR))
-                val username =
-                    getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.USERNAME))
+                val username = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.USERNAME))
                 val url = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.URL))
-                val followersUrl =
-                    getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.FOLLOWERS_URL))
-                val followingUrl =
-                    getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.FOLLOWING_URL))
-                favUsersList.add(User(id, username, avatar, url, followersUrl, followingUrl, nama))
+                val followersUrl = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.FOLLOWERS_URL))
+                val followingUrl = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.FOLLOWING_URL))
+                favUsersList.add(User(id, username, avatar,url, followersUrl, followingUrl, nama))
             }
         }
         return favUsersList
@@ -37,17 +34,14 @@ object MappingHelper {
                 val nama = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.NAME))
                 val id = getInt(getColumnIndexOrThrow(DatabaseContract.UserColumns.ID))
                 val avatar = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.AVATAR))
-                val username =
-                    getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.USERNAME))
+                val username = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.USERNAME))
                 val url = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.URL))
-                val followersUrl =
-                    getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.FOLLOWERS_URL))
-                val followingUrl =
-                    getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.FOLLOWING_URL))
-                user = User(id, username, avatar, url, followersUrl, followingUrl, nama)
+                val followersUrl = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.FOLLOWERS_URL))
+                val followingUrl = getString(getColumnIndexOrThrow(DatabaseContract.UserColumns.FOLLOWING_URL))
+                user = User(id, username, avatar,url, followersUrl, followingUrl, nama)
             }
             return user
-        } catch (e: Exception) {
+        }catch (e : Exception){
             return null
         }
     }

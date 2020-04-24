@@ -14,7 +14,12 @@ import com.amsal.githubuser.FollowingFragment
 import com.amsal.githubuser.R
 import com.amsal.githubuser.model.User
 
-class SectionsPagerAdapter(private val mContext: FragmentActivity?, fm: FragmentManager,  val urlFollowers: String, val urlFollowing: String) :
+class SectionsPagerAdapter(
+    private val mContext: FragmentActivity?,
+    fm: FragmentManager,
+    val urlFollowers: String,
+    val urlFollowing: String
+) :
     FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     @StringRes

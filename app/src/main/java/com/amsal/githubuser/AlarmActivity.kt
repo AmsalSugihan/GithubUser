@@ -25,7 +25,7 @@ class AlarmActivity : AppCompatActivity() {
 
         val preferences = this.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-        if(preferences.getBoolean(ISCHECKED, false) == true){
+        if (preferences.getBoolean(ISCHECKED, false) == true) {
             btn_switch.setChecked(true)
         }
 
